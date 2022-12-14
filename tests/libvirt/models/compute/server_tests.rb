@@ -41,7 +41,6 @@ Shindo.tests('Fog::Compute[:libvirt] | server model', ['libvirt']) do
         :autostart,
         :display,
         :nics,
-        :volumes,
         :active,
         :boot_order,
         :hugepages,
@@ -52,10 +51,14 @@ Shindo.tests('Fog::Compute[:libvirt] | server model', ['libvirt']) do
         end
       end
       tests("The attributes hash should have key") do
-        attributes.delete(:volumes)
         attributes.each do |attribute|
           test("#{attribute}") { model_attribute_hash.key? attribute }
         end
+      end
+      tests("The volumes method") do
+        test('should exist') { server.respond_to?('volumes') }
+        test('return an array') { server.volumes.is_a?(Array) }
+        test('not contain any nil elements') { server.volumes.none? { |volume| volume.nil? } }
       end
     end
     test('be a kind of Fog::Libvirt::Compute::Server') { server.kind_of? Fog::Libvirt::Compute::Server }
